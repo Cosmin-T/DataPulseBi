@@ -147,7 +147,8 @@ class Side:
                 password=password,
                 host=host,
                 port=port,
-                database=database
+                database=database,
+                ssl=None
             )
             print(f"Connected to MySQL Server: {cnx.get_server_info()}")
             cursor = cnx.cursor()
