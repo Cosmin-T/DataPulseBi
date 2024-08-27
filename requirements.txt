@@ -74,6 +74,7 @@ pydeck==0.9.1
 Pygments==2.18.0
 pygwalker==0.4.9.6
 pymongo==4.8.0
+PyMySQL==1.1.1
 pyodbc==5.1.0
 python-dateutil==2.9.0.post0
 python-tds==1.15.0

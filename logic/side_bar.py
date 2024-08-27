@@ -3,13 +3,12 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
-import mysql.connector
 import io
 import psycopg2
 import pytds
 import deta
 import pymongo
-import warnings
+import pymysql
 import urllib.parse
 
 class Side:
@@ -143,16 +142,15 @@ class Side:
         print(f"database: {database}")
 
         try:
-            cnx = mysql.connector.connect(
+            cnx = pymysql.connect(
                 user=username,
                 password=password,
                 host=host,
-                port=port
+                port=port,
+                database=database
             )
             print(f"Connected to MySQL Server: {cnx.get_server_info()}")
             cursor = cnx.cursor()
-            cursor.execute(f"USE {database}")
-            print(f"Switched to database: {database}")
 
             dfs = []
             for table in tables:
@@ -168,7 +166,7 @@ class Side:
             concatenated_df.to_csv('sql_output.csv', index=False)
             return concatenated_df
 
-        except (mysql.connector.Error, ValueError, TypeError, AttributeError) as err:
+        except (pymysql.Error, ValueError, TypeError, AttributeError) as err:
             error_message = f"Error occurred: {err}"
 
             if isinstance(err, ValueError):
@@ -183,28 +181,28 @@ class Side:
             elif isinstance(err, AttributeError):
                 error_message += "\nMissing or undefined attribute. Please verify the inputs and code structure."
 
-            elif isinstance(err, mysql.connector.Error):
-                if err.errno == 1045:
+            elif isinstance(err, pymysql.Error):
+                if err.args[0] == 1045:
                     error_message += "\nInvalid username or password. Please check your credentials."
-                elif err.errno == 1049:
+                elif err.args[0] == 1049:
                     error_message += "\nDatabase does not exist. Please check the database name."
-                elif err.errno == 1146:
+                elif err.args[0] == 1146:
                     error_message += f"\nTable '{tables[0]}' does not exist. Please check if the table names are correct and exist in the database."
-                elif err.errno == 1064:
+                elif err.args[0] == 1064:
                     if not database:
                         error_message = "\nDatabase name is missing. Please provide a valid database name."
                     elif not tables:
                         error_message = "\nTable name is missing. Please provide a valid table name."
                     else:
                         error_message = "\nSQL syntax error. Please check if you are missing or providing incorrect table names."
-                elif err.errno == 2003:
+                elif err.args[0] == 2003:
                     error_message += "\nConnection refused. Please check the host and port."
-                elif err.errno == 2005:
+                elif err.args[0] == 2005:
                     error_message += "\nUnknown host. Please check the host."
-                elif err.errno == 2006:
+                elif err.args[0] == 2006:
                     error_message += "\nMySQL server has gone away. Please check the connection."
                 else:
-                    error_message += f"\nUnexpected error. Error code: {err.errno}"
+                    error_message += f"\nUnexpected error. Error code: {err.args[0]}"
 
             else:
                 error_message += "\nUnexpected error. Please check the inputs and code structure."
