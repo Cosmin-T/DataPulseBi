@@ -162,13 +162,7 @@ cython_debug/
 #.idea/
 
 # Ignore specific files
-cracked_passwords.log
-test_db.py
-password_cracker.log
-deta_output.csv
-mongodb_output.csv
-sql_output.csv
-mssql_output.csv
 
 # Ignore specific directories
 logic/env/
+data
