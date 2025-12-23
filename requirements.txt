@@ -21,7 +21,7 @@ cryptography==43.0.0
 dask==2024.8.1
 dateutils==0.6.12
 decorator==5.1.1
-deta==1.2.0
+deta
 dnspython==2.6.1
 duckdb==1.0.0
 et-xmlfile==1.1.0
